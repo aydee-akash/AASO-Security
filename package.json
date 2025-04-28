@@ -1,0 +1,96 @@
+{
+  "name": "aaso-security",
+  "displayName": "AASO Security",
+  "description": "Scan code for vulnerabilities",
+  "version": "0.0.1",
+  "publisher": "aaso",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "aaso-security.scanCode",
+        "title": "AASO: Scan Code for Vulnerabilities"
+      },
+      {
+        "command": "aaso-security.snykScan",
+        "title": "AASO: Scan Code with Snyk"
+      },
+      {
+        "command": "aaso-security.sonarqubeScan",
+        "title": "AASO: Scan Code with SonarQube"
+      },
+      {
+        "command": "aaso-security.analyzeWithGemini",
+        "title": "AASO: Analyze with Gemini AI"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "aaso-security",
+          "title": "AASO Security",
+          "icon": "resources/security.svg"
+        }
+      ]
+    },
+    "views": {
+      "aaso-security": [
+        {
+          "id": "aaso-security.vulnerabilities",
+          "name": "Vulnerabilities",
+          "icon": "resources/vulnerability.svg"
+        },
+        {
+          "id": "aaso-security.geminiAnalysis",
+          "name": "AI Analysis",
+          "icon": "resources/ai.svg"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "AASO Security",
+      "properties": {
+        "aaso-security.geminiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Gemini API key for AI-powered vulnerability analysis",
+          "scope": "application"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "start-server": "node server.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.2.1",
+    "axios": "^1.9.0",
+    "express": "^4.18.2",
+    "node-fetch": "^2.6.7",
+    "snyk": "^1.1296.2"
+  },
+  "devDependencies": {
+    "@types/node": "16.x",
+    "@types/node-fetch": "^2.6.2",
+    "@types/vscode": "^1.60.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/parser": "^5.30.0",
+    "eslint": "^8.13.0",
+    "typescript": "^4.7.2"
+  }
+}
