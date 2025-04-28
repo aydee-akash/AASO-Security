@@ -307,39 +307,37 @@ export function activate(context: vscode.ExtensionContext) {
 
             const result = await response.json();
             let vulnerabilities: Vulnerability[] = [];
-            let sonarDashboardUrl: string | undefined;
 
             if (Array.isArray(result)) {
                 vulnerabilities = result;
             } else {
                 vulnerabilities = result.vulnerabilities || [];
-                sonarDashboardUrl = result.dashboardUrl;
             }
 
             console.log('Received vulnerabilities:', vulnerabilities);
-            console.log('SonarQube dashboard URL:', sonarDashboardUrl);
             
+            // Update vulnerabilities
             vulnerabilityProvider.updateVulnerabilities(vulnerabilities);
+            
+            // For SonarQube scans, always set the dashboard URL
+            if (endpoint === '/sonarqube-scan') {
+                const sonarDashboardUrl = 'http://localhost:9000/dashboard?id=temp-project';
+                vulnerabilityProvider.setSonarDashboardUrl(sonarDashboardUrl);
+                vscode.window.showInformationMessage('SonarQube analysis complete! Click the dashboard button to view results.');
+            } else {
+                vulnerabilityProvider.setSonarDashboardUrl(undefined);
+            }
             
             if (vulnerabilities.length === 0) {
                 vscode.window.showInformationMessage('No vulnerabilities found!');
             } else {
                 vscode.window.showInformationMessage(`Found ${vulnerabilities.length} vulnerabilities`);
             }
-
-            // If this was a SonarQube scan and we have a dashboard URL, show the button
-            if (endpoint === '/sonarqube-scan' && sonarDashboardUrl) {
-                console.log('Setting SonarQube dashboard URL:', sonarDashboardUrl);
-                vulnerabilityProvider.setSonarDashboardUrl(sonarDashboardUrl);
-            } else {
-                vulnerabilityProvider.setSonarDashboardUrl(undefined);
-            }
         } catch (error) {
             console.error('Scan error:', error);
             const errorMessage = error instanceof Error ? error.message : String(error);
             vscode.window.showErrorMessage(`Error scanning code: ${errorMessage}`);
             
-            // Check if the server is running
             if (errorMessage.includes('ECONNREFUSED') || errorMessage.includes('Failed to fetch')) {
                 vscode.window.showErrorMessage('Could not connect to the scan server. Make sure the server is running on http://localhost:3000');
             }

@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const axios = require('axios');
+const { spawn } = require('child_process');
 const app = express();
 const port = 3000;
 
@@ -345,39 +346,43 @@ sonar.scanner.metadataFilePath=${normalizedMetadataPath}`;
 }
 
 // Function to run SonarScanner
-function runSonarScanner(projectPath) {
+function runSonarScanner(projectDir) {
     return new Promise((resolve, reject) => {
-        console.log(`Running SonarScanner in directory: ${projectPath}`);
+        // Use the npm version of sonarqube-scanner
+        const command = 'sonarqube-scanner';
+        const args = ['-Dsonar.projectBaseDir=' + projectDir];
         
-        const currentDir = process.cwd();
-        process.chdir(projectPath);
+        console.log(`Running SonarScanner in directory: ${projectDir}`);
+        console.log(`Running command: ${command} ${args.join(' ')}`);
 
-        // Use the full path to sonar-scanner
-        const sonarScannerPath = 'C:\\sonar-scanner-7.1.0.4889-windows-x64\\bin\\sonar-scanner.bat';
-        
-        // Create the scanner work directory
-        const scannerWorkPath = path.join(projectPath, '.scannerwork');
-        if (!fs.existsSync(scannerWorkPath)) {
-            fs.mkdirSync(scannerWorkPath, { recursive: true });
-        }
-        
-        // Use forward slashes and no quotes for the project path
-        const normalizedProjectPath = projectPath.replace(/\\/g, '/');
-        const command = `"${sonarScannerPath}" -Dsonar.projectBaseDir=${normalizedProjectPath}`;
-        
-        console.log('Running command:', command);
-        
-        exec(command, { timeout: 60000 }, (error, stdout, stderr) => {
-            process.chdir(currentDir);
+        const scanner = spawn(command, args, {
+            cwd: projectDir,
+            shell: true
+        });
 
-            if (error) {
-                console.error('SonarScanner error:', error);
-                reject(new Error(`SonarScanner failed: ${stderr || error.message}`));
-                return;
+        let output = '';
+        let errorOutput = '';
+
+        scanner.stdout.on('data', (data) => {
+            output += data.toString();
+            console.log(data.toString());
+        });
+
+        scanner.stderr.on('data', (data) => {
+            errorOutput += data.toString();
+            console.error(data.toString());
+        });
+
+        scanner.on('close', (code) => {
+            if (code === 0) {
+                resolve(output);
+            } else {
+                reject(new Error(`SonarScanner failed: ${errorOutput}`));
             }
+        });
 
-            console.log('SonarScanner output:', stdout);
-            resolve(stdout);
+        scanner.on('error', (err) => {
+            reject(new Error(`SonarScanner error: ${err.message}`));
         });
     });
 }
