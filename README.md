@@ -13,165 +13,34 @@ A Visual Studio Code extension that helps developers identify and fix security v
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed:
-- Visual Studio Code (latest version)
-- Node.js (v14 or later)
-- npm (v6 or later)
-- Docker and Docker Compose (for SonarQube)
-- Snyk CLI (for Snyk integration)
+- Visual Studio Code (version 1.60.0 or higher)
+- Node.js (version 16.x or higher)
+- npm (comes with Node.js)
 
 ## Installation
 
-### 1. Install the Extension
 1. Clone this repository:
-   ```bash
-   git clone [repository-url]
-   cd aaso-security
-   ```
+```bash
+git clone [repository-url]
+cd aaso-security
+```
 
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
 3. Build the extension:
-   ```bash
-   npm run compile
-   ```
+```bash
+npm run compile
+```
 
-4. Start debugging in VS Code (F5)
+4. Open the project in VS Code:
+```bash
+code .
+```
 
-### 2. Install and Configure Snyk
-
-#### Install Snyk CLI
-1. Install Snyk CLI globally using npm:
-   ```bash
-   npm install -g snyk
-   ```
-
-2. Authenticate with Snyk:
-   ```bash
-   snyk auth
-   ```
-   This will open your browser to complete the authentication process.
-
-3. Generate a Snyk API token:
-   - Go to [Snyk Account Settings](https://app.snyk.io/account)
-   - Navigate to "API Tokens"
-   - Click "Generate Token"
-   - Copy the generated token
-
-4. Configure Snyk in the extension:
-   - Open VS Code settings (Ctrl+,)
-   - Search for "AASO Security"
-   - Enter your Snyk API token in the "Snyk API Token" field
-
-#### Using Snyk with the Extension
-1. Open a project in VS Code
-2. Run a Snyk scan:
-   - Click the "AASO Security" icon in the activity bar
-   - Click the "Run Snyk Scan" button
-   - Or use the command palette (Ctrl+Shift+P) and type "AASO Security: Run Snyk Scan"
-
-3. View results:
-   - Vulnerabilities will appear in the "Vulnerabilities" view
-   - Click on any vulnerability to see detailed information
-   - The extension will show:
-     - Vulnerability type and severity
-     - Affected package and version
-     - Description and impact
-     - Recommended fixes
-     - AI-powered analysis (if enabled)
-
-#### Additional Snyk Features
-1. Monitor your project:
-   ```bash
-   snyk monitor
-   ```
-   This will create a snapshot of your project on Snyk's servers for continuous monitoring.
-
-2. Test specific dependencies:
-   ```bash
-   snyk test [package-name]
-   ```
-
-3. Fix vulnerabilities:
-   ```bash
-   snyk wizard
-   ```
-   This interactive wizard helps you fix vulnerabilities by updating packages.
-
-4. Integrate with CI/CD:
-   - Add Snyk to your CI pipeline
-   - Set up automated testing
-   - Configure notifications for new vulnerabilities
-
-#### Troubleshooting Snyk
-1. Check if Snyk is running:
-   ```bash
-   # Check Snyk CLI version (if installed correctly)
-   snyk --version
-
-   # Check Snyk CLI status
-   snyk status
-
-   # Test Snyk connection
-   snyk test --help
-   ```
-
-2. Verify Snyk installation:
-   ```bash
-   # Check if Snyk is installed globally
-   npm list -g snyk
-
-   # Check Snyk executable path
-   which snyk  # On Linux/Mac
-   where snyk  # On Windows
-   ```
-
-3. If authentication fails:
-   - Check your internet connection
-   - Verify your Snyk account is active
-   - Try running `snyk auth` again
-   - Check authentication status: `snyk auth status`
-
-4. If scans fail:
-   - Ensure you're in a project directory
-   - Check your Snyk API token is correct
-   - Verify package.json exists
-   - Check Snyk CLI version: `snyk --version`
-   - Check Snyk logs: `snyk config get logLevel`
-
-5. Common issues:
-   - Network connectivity problems
-   - Invalid API token
-   - Outdated Snyk CLI
-   - Permission issues
-   - Node.js version compatibility
-
-6. Debug Snyk:
-   ```bash
-   # Enable debug logging
-   snyk config set logLevel=debug
-
-   # Run a test with debug output
-   snyk test --debug
-
-   # Check Snyk configuration
-   snyk config get
-   ```
-
-7. Reset Snyk configuration:
-   ```bash
-   # Clear Snyk configuration
-   snyk config clear
-
-   # Reset authentication
-   snyk auth reset
-
-   # Re-authenticate
-   snyk auth
-   ```
+5. Press F5 to start debugging the extension in a new VS Code window.
 
 ## Configuration
 
