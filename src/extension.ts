@@ -205,11 +205,65 @@ ${element.analysis.remediation.map((step, i) => `${i + 1}. ${step}`).join('\n')}
     }
 }
 
+class ScanActionsTreeProvider implements vscode.TreeDataProvider<ScanAction> {
+    private _onDidChangeTreeData: vscode.EventEmitter<ScanAction | undefined | null> = new vscode.EventEmitter<ScanAction | undefined | null>();
+    readonly onDidChangeTreeData: vscode.Event<ScanAction | undefined | null> = this._onDidChangeTreeData.event;
+
+    getTreeItem(element: ScanAction): vscode.TreeItem {
+        return {
+            label: element.label,
+            description: element.description,
+            iconPath: new vscode.ThemeIcon(element.icon),
+            command: {
+                command: element.command,
+                title: element.label
+            }
+        };
+    }
+
+    getChildren(): ScanAction[] {
+        return [
+            {
+                label: 'Basic Scan',
+                description: 'Scan current file for vulnerabilities',
+                icon: 'search',
+                command: 'aaso-security.scanCode'
+            },
+            {
+                label: 'Snyk Scan',
+                description: 'Scan with Snyk for vulnerabilities',
+                icon: 'shield',
+                command: 'aaso-security.snykScan'
+            },
+            {
+                label: 'SonarQube Scan',
+                description: 'Scan with SonarQube for code quality',
+                icon: 'graph',
+                command: 'aaso-security.sonarqubeScan'
+            },
+            {
+                label: 'AI Analysis',
+                description: 'Analyze with Gemini AI',
+                icon: 'sparkle',
+                command: 'aaso-security.analyzeWithGemini'
+            }
+        ];
+    }
+}
+
+interface ScanAction {
+    label: string;
+    description: string;
+    icon: string;
+    command: string;
+}
+
 export function activate(context: vscode.ExtensionContext) {
     console.log('AASO Security extension is now active!');
 
     const vulnerabilityProvider = new VulnerabilityTreeProvider();
     const geminiAnalysisProvider = new GeminiAnalysisProvider();
+    const scanActionsProvider = new ScanActionsTreeProvider();
     
     // Register the TreeDataProviders
     const vulnerabilityView = vscode.window.createTreeView('aaso-security.vulnerabilities', {
@@ -221,8 +275,13 @@ export function activate(context: vscode.ExtensionContext) {
         treeDataProvider: geminiAnalysisProvider,
         showCollapseAll: true
     });
+
+    const scanActionsView = vscode.window.createTreeView('aaso-security.scanActions', {
+        treeDataProvider: scanActionsProvider,
+        showCollapseAll: false
+    });
     
-    context.subscriptions.push(vulnerabilityView, geminiAnalysisView);
+    context.subscriptions.push(vulnerabilityView, geminiAnalysisView, scanActionsView);
 
     // Initialize with empty vulnerabilities
     vulnerabilityProvider.updateVulnerabilities([]);

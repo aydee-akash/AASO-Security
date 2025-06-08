@@ -314,7 +314,7 @@ app.post('/snyk-scan', async (req, res) => {
 // SonarQube configuration
 const SONARQUBE_CONFIG = {
     host: 'http://localhost:9000',
-    token: 'sqa_12f12dd07537ccf84ad7647f4e172b1f24dfb86d'
+    token: 'sqa_c298bb8796173aa8256de1b020291fe878e470a8'
 };
 
 // Function to create sonar-project.properties file
@@ -335,7 +335,7 @@ function createSonarPropertiesFile(projectPath) {
     const propertiesContent = `sonar.projectKey=temp-project
 sonar.sources=.
 sonar.host.url=http://localhost:9000
-sonar.login=sqa_12f12dd07537ccf84ad7647f4e172b1f24dfb86d
+sonar.token=${SONARQUBE_CONFIG.token}
 sonar.scm.disabled=true
 sonar.sourceEncoding=UTF-8
 sonar.projectBaseDir=${normalizedProjectPath}

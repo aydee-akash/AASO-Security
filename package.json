@@ -45,6 +45,11 @@
     "views": {
       "aaso-security": [
         {
+          "id": "aaso-security.scanActions",
+          "name": "Scan Actions",
+          "icon": "resources/scan.svg"
+        },
+        {
           "id": "aaso-security.vulnerabilities",
           "name": "Vulnerabilities",
           "icon": "resources/vulnerability.svg"
