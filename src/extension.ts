@@ -60,15 +60,12 @@ class VulnerabilityTreeProvider implements vscode.TreeDataProvider<Vulnerability
             return item;
         }
 
-        // Get severity icon based on vulnerability type
-        const severityIcon = this.getSeverityIcon(element.type);
-        
-        // Format the label with severity icon and location
+        // Format the label with location
         const location = element.file 
             ? `${element.file}:${element.line}`
             : `Line ${element.line}`;
             
-        const label = `${severityIcon} [${element.type}] ${location}`;
+        const label = `${element.type} - ${location}`;
         
         // Create a detailed tooltip
         const tooltip = new vscode.MarkdownString();
@@ -210,15 +207,41 @@ class ScanActionsTreeProvider implements vscode.TreeDataProvider<ScanAction> {
     readonly onDidChangeTreeData: vscode.Event<ScanAction | undefined | null> = this._onDidChangeTreeData.event;
 
     getTreeItem(element: ScanAction): vscode.TreeItem {
-        return {
-            label: element.label,
-            description: element.description,
-            iconPath: new vscode.ThemeIcon(element.icon),
-            command: {
-                command: element.command,
-                title: element.label
-            }
+        const item = new vscode.TreeItem(element.label, vscode.TreeItemCollapsibleState.None);
+        item.description = element.description;
+        
+        // Add custom styling based on the scan type
+        const iconColor = this.getIconColor(element.command);
+        item.iconPath = new vscode.ThemeIcon(element.icon, new vscode.ThemeColor(iconColor));
+        
+        // Add custom class and data attribute for styling
+        item.contextValue = 'scanAction';
+        item.tooltip = new vscode.MarkdownString(`**${element.label}**\n\n${element.description}`);
+        
+        // Add data attribute for CSS styling
+        item.resourceUri = vscode.Uri.parse(`command:${element.command}`);
+        
+        item.command = {
+            command: element.command,
+            title: element.label
         };
+        
+        return item;
+    }
+
+    private getIconColor(command: string): string {
+        switch (command) {
+            case 'aaso-security.scanCode':
+                return 'charts.blue';
+            case 'aaso-security.snykScan':
+                return 'charts.green';
+            case 'aaso-security.sonarqubeScan':
+                return 'charts.purple';
+            case 'aaso-security.analyzeWithGemini':
+                return 'charts.orange';
+            default:
+                return 'charts.blue';
+        }
     }
 
     getChildren(): ScanAction[] {
@@ -275,7 +298,7 @@ export function activate(context: vscode.ExtensionContext) {
         treeDataProvider: geminiAnalysisProvider,
         showCollapseAll: true
     });
-
+    
     const scanActionsView = vscode.window.createTreeView('aaso-security.scanActions', {
         treeDataProvider: scanActionsProvider,
         showCollapseAll: false

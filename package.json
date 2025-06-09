@@ -73,6 +73,9 @@
       }
     }
   },
+  "css": {
+    "scanActions": "./src/scanActions.css"
+  },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",

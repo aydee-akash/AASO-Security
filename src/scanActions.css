@@ -1,0 +1,36 @@
+.scan-action {
+    padding: 8px 12px;
+    margin: 4px 0;
+    border-radius: 4px;
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.scan-action:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+.scan-action .description {
+    opacity: 0.8;
+    font-size: 0.9em;
+    margin-top: 4px;
+}
+
+/* Custom colors for different scan types */
+.scan-action[data-command="aaso-security.scanCode"] {
+    border-left: 4px solid var(--vscode-charts-blue);
+}
+
+.scan-action[data-command="aaso-security.snykScan"] {
+    border-left: 4px solid var(--vscode-charts-green);
+}
+
+.scan-action[data-command="aaso-security.sonarqubeScan"] {
+    border-left: 4px solid var(--vscode-charts-purple);
+}
+
+.scan-action[data-command="aaso-security.analyzeWithGemini"] {
+    border-left: 4px solid var(--vscode-charts-orange);
+} 
